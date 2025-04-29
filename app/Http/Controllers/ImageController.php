@@ -17,7 +17,7 @@ class ImageController extends Controller
             'file',
             file_get_contents($image),
             $image->getClientOriginalName()
-        )->post('http://127.0.0.1:8000/predict');
+        )->post('https://andre770-luka.hf.space/predict');
         if ($response->successful()) {
             $result = $response->json();
             return view('result', [
