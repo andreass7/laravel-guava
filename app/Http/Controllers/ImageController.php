@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Solution;
+use App\Providers\AppModelService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class ImageController extends Controller
 {
@@ -13,18 +15,23 @@ class ImageController extends Controller
         ]);
 
         $image = $request->file('image');
-        $response = Http::attach(
-            'file',
-            file_get_contents($image),
-            $image->getClientOriginalName()
-        )->post('https://andre770-luka.hf.space/predict');
+        $response = AppModelService::predict($image);
+
         if ($response->successful()) {
             $result = $response->json();
+            $label = $result['prediction_label'];
+            $solutionData = Solution::where('label', $label)->first();
             return view('result', [
-                'prediction_label' => $result['prediction_label'],
-                'confidence'=>$result['confidence']
+                'prediction_label' => $label,
+                'confidence'=>$result['confidence'],
+                'solution' => $solutionData->solution ?? 'No solution found',
+                'disease_name' => $solutionData->name ?? $label,
             ]);
         } else {
+            \Illuminate\Support\Facades\Log::error("ML prediction failed", [
+            'status' => $response->status(),
+            'body' => $response->body()
+            ]);
             return back()->withErrors(['msg' => 'Prediction failed']);
         }
     }

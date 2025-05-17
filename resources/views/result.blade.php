@@ -19,6 +19,10 @@
                 <span class="font-semibold">Confidence:</span> 
                 <span class="text-green-600">{{ number_format($confidence * 100, 2) }}%</span>
             </p>
+            <div>
+                <p class="text-lg text-green-600">Nama Penyakit: <span class="text-gray-400">{{ $disease_name }}</span></p>
+                <p class="text-lg text-green-600">Solution: <span class="text-gray-400">{{ $disease_name }}</span></p>
+            </div>
         </div>
 
         <div class="pt-6">
